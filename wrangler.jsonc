@@ -1,0 +1,11 @@
+{
+    "name": "adguardfilters",
+    "compatibility_date": "2025-11-11",
+    "main": "index.js",
+    "workers_dev": true,
+    "preview_urls": true,
+    "observability": {
+        "enabled": true,
+        "head_sampling_rate": 1
+    }
+}
