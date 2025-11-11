@@ -1,6 +1,9 @@
 import { MAP } from './map.js';
 
-async function handleRequest(request) {
+// 缓存时间3600秒
+const CACHE_DURATION = 3600;
+
+async function handleRequest(request, ctx) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
@@ -15,21 +18,65 @@ async function handleRequest(request) {
   // 检查是否是请求的过滤器文件
   const targetUrl = MAP[fileName];
 
+  if (!targetUrl) {
+    return new Response('文件未找到', {
+      status: 404,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
+  }
+
+  // 使用 Cloudflare Cache API
+  const cache = caches.default;
+  const cacheKey = new Request(url.toString(), request);
+
+  // 尝试从缓存中获取
+  let response = await cache.match(cacheKey);
+
+  if (response) {
+    // 缓存命中，添加标识头
+    const newHeaders = new Headers(response.headers);
+    newHeaders.set('X-Cache-Status', 'HIT');
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders,
+    });
+  }
+
+  // 缓存未命中，重新获取
   try {
-    // 代理请求到原始 URL
-    const response = await fetch(targetUrl, {
+    response = await fetch(targetUrl, {
       headers: {
         'User-Agent': request.headers.get('User-Agent') || 'Cloudflare-Worker',
       },
     });
 
-    // 创建新的响应，添加适当的缓存头
-    const newResponse = new Response(response.body, response);
+    // 检查响应是否成功
+    if (!response.ok) {
+      return new Response(`请求失败: ${response.status} ${response.statusText}`, {
+        status: response.status,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      });
+    }
 
-    // 设置响应头
-    newResponse.headers.set('Content-Type', 'text/plain; charset=utf-8');
-    newResponse.headers.set('Cache-Control', 'public, max-age=3600');
-    newResponse.headers.set('Access-Control-Allow-Origin', '*');
+    // 克隆响应用于缓存（响应体只能读取一次）
+    const responseToCache = response.clone();
+
+    // 创建新的响应，添加适当的缓存头
+    const newResponse = new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': `public, max-age=${CACHE_DURATION}`,
+        'Access-Control-Allow-Origin': '*',
+        'X-Cache-Status': 'MISS',
+        'X-Cache-Time': new Date().toISOString(),
+      },
+    });
+
+    // 使用 waitUntil 异步缓存响应，不阻塞返回
+    ctx.waitUntil(cache.put(cacheKey, responseToCache));
 
     return newResponse;
   }
@@ -45,6 +92,6 @@ async function handleRequest(request) {
 
 export default {
   async fetch(request, env, ctx) {
-    return handleRequest(request);
+    return handleRequest(request, ctx);
   },
 };
