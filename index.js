@@ -16,6 +16,11 @@ async function handleRequest(request) {
   // 移除开头的斜杠
   const fileName = pathname.substring(1);
 
+  // 忽略 favicon 和其他图标文件请求
+  if (fileName.endsWith('.ico') || fileName === 'favicon.ico') {
+    return new Response(null, { status: 204 });
+  }
+
   // 检查是否是请求的过滤器文件
   const targetUrl = FILE_MAPPINGS[fileName];
 
