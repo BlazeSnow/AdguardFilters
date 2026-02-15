@@ -6,6 +6,12 @@
     "workers_dev": false,
     "preview_urls": false,
     "observability": {
-        "enable": false
+        "logs": {
+            "enabled": false,
+            "invocation_logs": false
+        },
+        "traces": {
+            "enabled": false
+        }
     }
 }
