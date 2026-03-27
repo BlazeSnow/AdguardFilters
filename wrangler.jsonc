@@ -3,8 +3,14 @@
     "account_id": "55165971712e6b45bb3c51a76cac33ec",
     "compatibility_date": "2026-01-20",
     "main": "index.js",
-    "workers_dev": true,
+    "workers_dev": false,
     "preview_urls": false,
+    "routes": [
+        {
+            "pattern": "adguard.blazesnow.us.kg",
+            "custom_domain": true
+        }
+    ],
     "observability": {
         "logs": {
             "enabled": false,
