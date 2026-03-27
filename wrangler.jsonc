@@ -3,7 +3,7 @@
     "account_id": "55165971712e6b45bb3c51a76cac33ec",
     "compatibility_date": "2026-01-20",
     "main": "index.js",
-    "workers_dev": false,
+    "workers_dev": true,
     "preview_urls": false,
     "observability": {
         "logs": {
