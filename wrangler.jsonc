@@ -1,13 +1,13 @@
 {
     "name": "adguardfilters",
     "account_id": "55165971712e6b45bb3c51a76cac33ec",
-    "compatibility_date": "2026-01-20",
+    "compatibility_date": "2026-02-24",
     "main": "index.js",
     "workers_dev": false,
     "preview_urls": false,
     "routes": [
         {
-            "pattern": "adguard.blazesnow.us.kg",
+            "pattern": "adguard.206174.xyz",
             "custom_domain": true
         }
     ],
