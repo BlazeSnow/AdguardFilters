@@ -6,7 +6,7 @@
   },
   "license": "MIT",
   "author": "BlazeSnow",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "wrangler dev",
