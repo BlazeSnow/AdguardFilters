@@ -1,7 +1,7 @@
 {
     "name": "adguardfilters",
     "account_id": "55165971712e6b45bb3c51a76cac33ec",
-    "compatibility_date": "2026-02-24",
+    "compatibility_date": "2026-04-07",
     "main": "index.js",
     "workers_dev": false,
     "preview_urls": false,
